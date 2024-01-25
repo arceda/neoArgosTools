@@ -34,7 +34,20 @@ sudo apt install openjdk-17-jdk
 sudo apt install r-base r-base-dev
 
 No se compila, solo se llama al binario
+
+
+========= Annovar (https://annovar.openbioinformatics.org/en/latest/user-guide/download/)
+
+Una vez descargado, tenemos q descargar las bases de datos para hg38.
+En el directorio de annovar ejecutar:
+
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar refGene humandb/
+perl annotate_variation.pl -buildver hg38 -downdb cytoBand humandb/
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar exac03 humandb/ 
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar avsnp147 humandb/ 
+perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar dbnsfp30a humandb/
 """
+
 
 import sys
 import os
@@ -104,6 +117,95 @@ cmd_vcf_unzip = f'gunzip outfile1/sample.filtered.vcf.gz'
 # Annovar
 # ===========================================================================
 
+cmd_annovar = f'perl {path_tools}/annovar/table_annovar.pl outfile1/sample.filtered.vcf {path_tools}/annovar/humandb/ -buildver hg38 -out annovar_out/annovar -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a -operation g,r,f,f,f -nastring . -vcfinput'
+
+# extrae las mutaciones non-synonnymous SNV xq estas si generan cambios en las proteínas.
+def nonsynonnymousSNV():
+    input1=open('annovar_out/annovar.hg38_multianno.txt','r')
+    output1=open("outfile1/sample-nonsynonymous-SNV.txt","w")
+    for line in input1:
+       ls1=line.strip().split("\t")
+       if ls1[8]=='nonsynonymous SNV':
+           ls2=ls1[9].strip('"').split(',')
+           if len(ls2) >=2:
+               for i in range(len(ls2)):
+                    output1.write(ls2[i]+'\n')
+                #ls3=ls2[i].split(':')
+           else:
+               output1.write(ls1[9]+'\n')
+
+# extrae el nombre del gen y la secuencia de la base de datos de uniprot.fasta
+def readUniProt():
+    input1=open('reference_files/uniprot.fasta','r')
+    output=open('outfile1/reuniprot.fasta','w')
+    a=''
+    b=''
+    for line in input1:    
+        if '>' in line:
+            if a !='':
+                output.write(a+'\n')      
+            b=line.split('|')[2].split('_')[0]  
+            c= line.split(' ')
+            d=c[-3].split('=')
+        #if 
+            e=d[1]
+        #print e 
+            output.write(b+'\t'+e+'\t')
+            a=''
+        else:
+            a+=line.strip()
+    output.write(a+'\n')
+
+# buscar los mutaciones nonsynonnymous en UniProt
+def nonsynonnymousSNV_in_uniprot():
+    input1=open("outfile1/reuniprot.fasta","r")
+    input2=open("outfile1/sample-nonsynonymous-SNV.txt","r")
+    output1=open("outfile1/candidate_match_proSeq.txt","w")
+    dict1={}
+    dict2={}
+    # crea un diccionario con la infpormacion de UniProt. 
+    # la llave es el noombre de gen y el valor la seq
+    for line in input1:
+        ls1=line.strip().split("\t")
+        dict1[ls1[0]]=ls1[2]
+        dict2[ls1[1]]=ls1[2]
+    
+    for line1 in input2:
+        ls2=line1.strip().split(":")
+    
+        #if dict1.has_key(ls2[0]) or dict1.has_key(ls2[1]):
+        if (ls2[0] in dict1.keys()) or (ls2[1] in dict1.keys()):
+            output1.write(ls2[0]+"\t"+ls2[4]+"\t"+dict1[ls2[0]]+"\n")
+        else:
+            pass   
+
+# quita los repetidos
+def unique_filter():
+    lines_seen=set()
+    outfile = open("outfile1/match_proSeq.txt","w")
+    for line in open("outfile1/candidate_match_proSeq.txt","r"):
+        if line not in lines_seen:
+            outfile.write(line)
+            lines_seen.add(line)
+    outfile.close()
+
+def to_fasta():
+    input1=open("outfile1/match_proSeq.txt","r")
+    output1=open("var-proSeq.fasta","w")
+    for line in input1:
+        ls1=line.strip().split("\t")
+        ls2=ls1[1].split('.')
+        ls3=ls2[1][0]
+        ls4=ls2[1][-1]
+        ls5=ls2[1][1:-1]
+        ls6=int(ls5)-1
+        ls7=list(ls1[2])
+        if len(ls1[2]) >= int(ls2[1][1:-1]):   
+            if ls7[ls6] == ls2[1][0]:
+                ls7[ls6]=ls2[1][-1]
+                seq="".join(ls7)
+                output1.write(">"+ls1[0]+'|'+ls1[1]+'\n'+seq+'\n')
+
 #os.system(cmd_index)
 #os.system(cmd_map)
 #os.system(cmd_samtools_fixmate)
@@ -117,3 +219,9 @@ cmd_vcf_unzip = f'gunzip outfile1/sample.filtered.vcf.gz'
 #os.system(cmd_vcf_tabix)
 #os.system(cmd_vcf_filter)
 #os.system(cmd_vcf_unzip)
+#os.system(cmd_annovar)
+#nonsynonnymousSNV()
+#readUniProt()
+#nonsynonnymousSNV_in_uniprot()
+#unique_filter()
+to_fasta()

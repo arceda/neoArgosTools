@@ -1,0 +1,6 @@
+annovar_out/*
+outfile1/*
+reference_files*
+test/*
+test.tar.gz
+var-proSeq.fasta
