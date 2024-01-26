@@ -1,3 +1,9 @@
+# Realida la priorización de neoantígenos. Toma como entrada los neoantigenos detectados por Annovar, luego realizar algunos filtros para  luego utilizar NetMHCpan4.1
+
+""" NetPMHCpan4.1
+- Descargar de https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/
+- Luego seguir los pasos del README
+"""
 
 import os
 import pandas as pd 
@@ -102,10 +108,11 @@ def last_filter():
                 output2.write(ls[0]+':'+ls1[1][0]+ls1[1][-1]+':'+num2+"\t"+seq3+'\n')
 
 def netMHCpan():
-    #HLAs = " A*03:01,A*03:01,B*07:02,B*35:03,C*07:02,C*04:01	"
+    #HLAs = " A*03:01,A*03:01,B*07:02,B*35:03,C*07:02,C*04:01	" EEsta es la salida de optitype
+    # se tiene que mejorar para quea dinamico y obtenga lasalida de optitype.
     HLAs = " HLA-A03:01,HLA-A03:01,HLA-B07:02,HLA-B35:03,HLA-C07:02,HLA-C04:01	"
-    #cmd = f'{path_tools}/netMHCpan-4.1/netMHCpan -a {HLAs} {path_outfile2}/gene-21AA.fasta  > {path_outfile2}/my.out'
-    cmd = f'{path_tools}/netMHCpan-4.1/netMHCpan -a {HLAs} {path_outfile2}/gene-21AA.fasta'
+    cmd = f'{path_tools}/netMHCpan-4.1/netMHCpan -a {HLAs} {path_outfile2}/gene-21AA.fasta  > {path_outfile2}/my.out'
+    #cmd = f'{path_tools}/netMHCpan-4.1/netMHCpan -a {HLAs} {path_outfile2}/gene-21AA.fasta'
     #print(cmd)
     os.system(cmd)
 
@@ -166,8 +173,8 @@ def filter_netMHCpan():
 #handle_seq()
 #unique_filter("outfile2/gene-Var-proSeq.txt", "outfile2/Gene-Varseqence.csv")
 #last_filter()
-netMHCpan() # es el que mas demora 30 min 
+#netMHCpan() # es el que mas demora 30 min 
 #processNetMHCpan_output()
 #join_results()
 #filter_netMHCpan()
-#unique_filter("outfile2/candid1-noantigen.txt", "outfile2/candid-noantigen.txt")
+unique_filter("outfile2/candid1-noantigen.txt", "outfile2/candid-noantigen.txt")
