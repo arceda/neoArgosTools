@@ -39,6 +39,7 @@ Luego debe tener las siguientes herramientas:
 - BCF tools 
 - Annovar
 - NetMHCpan4.1
+- OptiType
 
 Designe una carpeta en su SO para instalar las herramientas.
 
@@ -129,6 +130,51 @@ Tambien modificar la ruta de la carpeta tmp:
 if ( ${?TMPDIR} == 0 ) then
 	setenv  TMPDIR  /home/vicente/biotools/netMHCpan-4.1/tmp
 endif
+```
+
+## OptiType
+
+Instale HDF5:
+
+```
+sudo apt-get build-dep hdf5
+```
+
+Tambien necesitamos Razers3. 
+```
+git clone https://github.com/seqan/seqan.git
+mkdir seqan/build; cd seqan/build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make razers3
+./bin/razers3 --help
+```
+
+Instalar estas librerías de Python (de preferencia usar anaconda):
+
+```
+pip install numpy
+pip install pyomo
+pip install pysam
+pip install matplotlib
+
+pip install tables
+pip install pandas
+pip install future
+
+conda install -c conda-forge glpk
+```
+
+Luego descargamos OptiType:
+```
+git clone https://github.com/FRED-2/OptiType.git
+```
+
+y creamos un archivo *config.ini* (tomamos como plantilla el archivo *config.ini.example*). En este archivo de configuración debemos especificar la ruta de Razers3, lo abrimos y editamos. Por ejemplo debería quedar similar a esto:
+
+```
+# Absolute path to RazerS3 binary, and number of threads to use for mapping
+
+razers3=/home/vicente/biotools/seqan/build/bin/razers3
 ```
 
 
