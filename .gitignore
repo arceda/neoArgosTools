@@ -1,5 +1,6 @@
 annovar_out/*
 outfile1/*
+outfile2/*
 reference_files*
 test/*
 test.tar.gz
