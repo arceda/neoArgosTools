@@ -58,7 +58,7 @@ sudo apt-get -y install libbz2-dev
 sudo apt-get install -y liblzma-dev
 ```
 
-Decomprimir y dentro de la carpeta de Samtools 
+Descomprimir y dentro de la carpeta de Samtools 
 ```
 ./configure --prefix=/where/to/install
 make
@@ -116,7 +116,7 @@ perl annotate_variation.pl -buildver hg38 -downdb -webfrom annovar dbnsfp30a hum
 
 Descargar de: https://services.healthtech.dtu.dk/services/NetMHCpan-4.1/
 
-Luego editar el archivo netMHCpan y agregar la ruta donde se descargo de manera similar a esta:
+Luego editar el archivo *netMHCpan* y agregar la ruta donde se descargo de manera similar a esta:
 
 ```
 # full path to the NetMHCpan 4.0 directory (mandatory)
