@@ -175,4 +175,4 @@ to_fasta()
 
 Al finalizar la ejecución de los 3 scripts se va a generar el achivo *outfile2/candid-neoantigen.txt*. Este contiene los neoantígenos.
 
-Queda pendiente actualizar la función *netMHCpan()* del script *3_neoantigen_priorization.py*. Esta función debe leer la salida de optitype que debería estar en: *test/rna/xxxx*. El script 2_optitype genera ahí la salida con información de los tipos de HLA. Entonces la función *netMHCpan()* debería leer esa salida y utilizarzo antes de invocar a netMHCpan4.1.
+Queda pendiente actualizar la función *netMHCpan()* del script *3_neoantigen_priorization.py*. Esta función debe leer la salida de optitype que debería estar en: *test/rna/xxxx*. El script *2_optitype.py* genera ahí la salida con información de los tipos de HLA. Entonces la función *netMHCpan()* debería leer esa salida y utilizarzo antes de invocar a netMHCpan4.1.
