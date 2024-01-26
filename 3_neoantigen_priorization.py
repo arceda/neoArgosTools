@@ -167,6 +167,11 @@ def filter_netMHCpan():
                 output1.write(ls1[0]+'\t'+ls3[0]+'\t'+ls1[1]+'\t'+ls1[3]+'\t'+ls1[4]+'\t'+ls3[1]+'\t'+str(ls2)+'\n')
 
 
+
+# =================================================
+# descomentar uno a uno para evaluar el pipeline
+# =================================================
+                
 #getNonsynonymousSNVannovar()
 #nonsynonnymousSNV_in_uniprot()
 #unique_filter("outfile2/match1_proSeq.txt", "outfile2/match_proSeq.txt")

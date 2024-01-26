@@ -206,6 +206,10 @@ def to_fasta():
                 seq="".join(ls7)
                 output1.write(">"+ls1[0]+'|'+ls1[1]+'\n'+seq+'\n')
 
+# =================================================
+# descomentar uno a uno para evaluar el pipeline
+# =================================================
+
 #os.system(cmd_index)
 #os.system(cmd_map)
 #os.system(cmd_samtools_fixmate)
