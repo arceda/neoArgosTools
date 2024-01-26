@@ -67,7 +67,7 @@ make install
 
 */where/to/install* es el directorio donde desea tener los archivos ejecutables.  
 
-Vuelva a compilar para que se instale en la carpta bin de ubuntu (esto es necesario para OptiType)
+Vuelva a compilar para que se instale en la carpeta *bin* de ubuntu (esto es necesario para OptiType)
 ```
 ./configure 
 make
