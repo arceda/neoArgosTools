@@ -5,3 +5,4 @@ reference_files*
 test/*
 test.tar.gz
 var-proSeq.fasta
+node_modules/*
