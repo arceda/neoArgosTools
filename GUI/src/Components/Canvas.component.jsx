@@ -1,8 +1,17 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useCanvasContext } from "../Context/Canvas.context";
 import * as go from "gojs";
+import { SidepanelComponent } from "./Sidepanel.component";
 
-const createDiagram = (initialNodes) => {
+const FASTQC = () => {
+  //Propiedades FASTQC (Estaran como elementos de un form)
+  return (
+    <>
+    </>
+  )
+}
+
+const createDiagram = (initialNodes, setSidebarOpen, setSidebarNodeData) => {
   const $ = go.GraphObject.make;
 
   const myDiagram = $(go.Diagram, "myDiagramDiv", {
@@ -14,6 +23,13 @@ const createDiagram = (initialNodes) => {
       $(
         go.Panel,
         "Vertical",
+        {
+          click: function (e, obj) {
+            let node = obj.part.data
+            setSidebarOpen(true);
+            setSidebarNodeData(node);
+          }
+        },
         $(
           go.Picture,
           { width: 50, height: 50, margin: 6 },
@@ -44,10 +60,12 @@ const createDiagram = (initialNodes) => {
 export const CanvasComponent = () => {
   const diagramRef = useRef(null);
   const { nodes } = useCanvasContext();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarNodeData, setSidebarNodeData] = useState(null);
 
   useEffect(() => {
     if (!diagramRef.current) {
-      diagramRef.current = createDiagram(nodes);
+      diagramRef.current = createDiagram(nodes, setSidebarOpen, setSidebarNodeData)
     }
   }, []);
 
@@ -72,6 +90,10 @@ export const CanvasComponent = () => {
   }, [nodes]);
 
   return (
-    <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }}></div>
+    <>
+      <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }} />
+      {sidebarOpen && <SidepanelComponent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} nodeData={sidebarNodeData} />}
+    </>
+
   );
 };

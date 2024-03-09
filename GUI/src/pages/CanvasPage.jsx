@@ -14,7 +14,7 @@ const CanvasPage = () => {
         { text: "Star", image: "images/file.png" },
         { text: "BWA", image: "images/file.png" },
         { text: "Bowtie", image: "images/file.png" },
-        { text: "FastQC", image: "images/file.png" },
+        { id: 1, text: "FastQC", image: "images/file.png" }, //Agregar el id para que el panel sea personalizado
         { text: "Samtools", image: "images/file.png" },
       ],
     },
@@ -48,11 +48,12 @@ const CanvasPage = () => {
     },
   ];
 
-  const handleButtonClick = (text, image) => {
+  const handleButtonClick = (id, text, image) => {
     const lastNodeKey = nodes.length > 0 ? nodes[nodes.length - 1].key : 1;
     const newNodeKey = lastNodeKey + 1;
 
     addNode({
+      customID: id, //ID personalizado basado en la implementación de cada herramienta de manera secuencial
       key: newNodeKey,
       text: text,
       color: "lightgray",
@@ -87,10 +88,11 @@ const CanvasPage = () => {
             >
               {category.items.map((button, buttonIndex) => (
                 <ButtonComponent
+                  id={button.id}
                   key={buttonIndex}
                   text={button.text}
                   image={button.image}
-                  onClick={() => handleButtonClick(button.text, button.image)}
+                  onClick={() => handleButtonClick(button.id, button.text, button.image)}
                 />
               ))}
             </List>

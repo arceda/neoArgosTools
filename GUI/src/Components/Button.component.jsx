@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 
-export const ButtonComponent = ({ text, image, onClick }) => (
+export const ButtonComponent = ({ id, text, image, onClick }) => (
   <ListItem>
     <Button
       onClick={onClick}

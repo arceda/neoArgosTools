@@ -4,7 +4,7 @@ const CanvasContext = createContext();
 
 export const CanvasProvider = ({ children }) => {
   const [nodes, setNodes] = useState([
-    { key: 0, text: "RNA", color: "lightblue", image: "images/rna.png" },
+    { customID: 0, key: 0, text: "RNA", color: "lightblue", image: "images/rna.png" },
   ]);
 
   const addNode = (node) => {
