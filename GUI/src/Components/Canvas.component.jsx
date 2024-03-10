@@ -24,7 +24,7 @@ const createDiagram = (initialNodes, setSidebarOpen, setSidebarNodeData) => {
         go.Panel,
         "Vertical",
         {
-          click: function (e, obj) {
+          click: function (e, obj) { //Abrir el modal
             let node = obj.part.data
             setSidebarOpen(true);
             setSidebarNodeData(node);
@@ -92,7 +92,7 @@ export const CanvasComponent = () => {
   return (
     <>
       <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }} />
-      {sidebarOpen && <SidepanelComponent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} nodeData={sidebarNodeData} />}
+      <SidepanelComponent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} nodeData={sidebarNodeData} />
     </>
 
   );
