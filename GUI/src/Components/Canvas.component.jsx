@@ -4,11 +4,18 @@ import * as go from "gojs";
 import { SidepanelComponent } from "./Sidepanel.component";
 
 const FASTQC = () => {
-  //Propiedades FASTQC (Estaran como elementos de un form)
-  return (
-    <>
-    </>
-  )
+  let inputs = [{
+    "name": "file",
+    "type": "file",
+    "label": "Select a file to analyze",
+    "handleChange": function (e, data, setData) {
+      const { name, files } = e.target;
+      const file = files[0];
+      setData({ ...data, [name]: file });
+    }
+  }]
+
+  return inputs
 }
 
 const createDiagram = (initialNodes, setSidebarOpen, setSidebarNodeData) => {
@@ -92,7 +99,7 @@ export const CanvasComponent = () => {
   return (
     <>
       <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }} />
-      <SidepanelComponent isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} nodeData={sidebarNodeData} />
+      <SidepanelComponent formTemplate={FASTQC()} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </>
 
   );
