@@ -3,16 +3,25 @@ import { useCanvasContext } from "../Context/Canvas.context";
 import * as go from "gojs";
 import { SidepanelComponent } from "./Sidepanel.component";
 
+
 const FASTQC = () => {
   let inputs = [{
     "name": "file",
     "type": "file",
     "label": "Select a file to analyze",
-    "handleChange": function (e, data, setData) {
-      const { name,  files } = e.target;
-      console.log(files)
+    "handleChange": function (e, setData) {
+      const { files } = e.target;
       const file = files[0];
-      setData({ ...data, [name]: file });
+
+      if (file) {
+        setData(file);
+        alert("File selected")
+      } else {
+        alert("No file selected");
+      }
+    },
+    "style": {
+      "color": "transparent"
     }
   }]
 
@@ -99,7 +108,7 @@ export const CanvasComponent = () => {
 
   return (
     <>
-      <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }} />
+      <div id="myDiagramDiv" style={{ width: "100%", height: "100vh", zIndex: "0" }} />
       <SidepanelComponent formTemplate={FASTQC()} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
     </>
 

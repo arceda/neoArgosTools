@@ -2,13 +2,32 @@ import { Button } from "@mui/material";
 import React, { useState } from "react";
 import SlidingPane from "react-sliding-pane";
 import "react-sliding-pane/dist/react-sliding-pane.css"
-// import { exec } from "child_process";
 
-const fqcCommand = "../tools_scripts/fastqc.sh"; //Archivo sh para ejecutar el FASTQC
+const baseURL= "http://127.0.0.1:5000"
+
+const uploadFile = async (file) => {
+    console.log(file)
+    if (file != null) {
+        const form = new FormData();
+        form.append("fastqc_file", file);
+
+        let response = await fetch(baseURL + "/fastqc",
+            {
+                method: 'post',
+                body: form,
+            }
+        );
+        let res = await response.json();
+        console.log(res)
+        if (res.status !== 1) {
+            alert('Error uploading file');
+        }
+    }
+}
 
 export const SidepanelComponent = ({ formTemplate, isOpen, onClose }) => {
     const { handleChange } = formTemplate[0];
-    const [data, setData] = useState(false);
+    const [data, setData] = useState("");
 
     return (
         <SlidingPane
@@ -18,24 +37,31 @@ export const SidepanelComponent = ({ formTemplate, isOpen, onClose }) => {
             width="600px"
             onRequestClose={onClose}
         >
+            <div>
             {formTemplate.map((item) => { //Renderiza por cada item, solucionar que sea personalizado
-                const { name, type, label } = item
+                const { name, type, label, style } = item
                 return (
-                    <div key={name}>
+                    <div key={name} style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: "20px"
+                    }}>
                         <label htmlFor={name}>{label}</label>
                         {(
                             <input
+                                style={style}
                                 type={type}
                                 id={name}
                                 name={name}
                                 value={""}
-                                onChange={(e) => handleChange(e, data, setData)} //Finalizada subida de archivos
+                                onChange={(e) => handleChange(e, setData)} //Finalizada subida de archivos
                                 accept=".fastq,.fq,.fastq.gz,.fq.gz,.bam,.sam,.cram,.sra,.srx,.fast,.fasta,.fa,.gff,.gtf,.vcf,.vcf.gz,.tsv,.txt,.bed,.wig,.bw,.bb"
-                                />)}
+                            />)}
                     </div>
                 )
             })}
-            <Button variant="outlined">Execute Tool</Button>
+            <Button variant="outlined" onClick={() => uploadFile(data)}>Execute Tool</Button>
+            </div>
         </SlidingPane>
     );
 };

@@ -1,5 +1,4 @@
 - Mejorar interfaz gráfica de los sidepanels
-- Cada elemento del grafo se coloca encima del sidepanel (Modificar z-index)
 - Implementar paso del archivo para la ejecución de la herramienta
 - Hacer el archivo .sh para ejecutar fastqc
 - Resultados
