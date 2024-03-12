@@ -9,7 +9,8 @@ const FASTQC = () => {
     "type": "file",
     "label": "Select a file to analyze",
     "handleChange": function (e, data, setData) {
-      const { name, files } = e.target;
+      const { name,  files } = e.target;
+      console.log(files)
       const file = files[0];
       setData({ ...data, [name]: file });
     }
