@@ -1,10 +1,11 @@
 from io import BytesIO
 from flask import jsonify, request, Flask
-import os
 import subprocess
+import tempfile
 from flask_cors import CORS
 
-FASTQC = "./scripts/fastqc.sh" #Ubicacion del SH de FastQC
+fastQC = "../FastQC/fastqc"
+
 app = Flask(__name__)
 CORS(app) 
 
@@ -13,21 +14,20 @@ def upload_file():
     d = {}
     try:
         file = request.files['fastqc_file']
-        filename = file.filename
-        print(f"Uploading file {filename}")
         d['status'] = 1
         
-        # Guardar el archivo en el servidor
-        archivo_guardado = os.path.join(app.root_path, filename)
-        file.save(archivo_guardado)
-        subprocess.run(['bash', 'tu_script.sh', archivo_guardado]) # TEMPLATE PARA EJECUTAR
-
-
+        with tempfile.NamedTemporaryFile(delete=True) as temp_file:
+            temp_file.write(file.read())
+            process = subprocess.Popen([fastQC, '-o', 'output_dir', temp_file.name], stdout=subprocess.PIPE) # AYUDAAAA D:
+            output = temp_file.read().decode('utf-8')
+            d['result'] = output
+    
     except Exception as e:
         print(f"Couldn't upload file {e}")
         d['status'] = 0
+        d['result'] = None # Mal procesamiento
 
-    return jsonify(d)  # Temporal
+    return jsonify(d)
 
 if __name__ == '__main__':
     app.run(debug=True)
