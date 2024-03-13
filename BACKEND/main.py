@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 from flask_cors import CORS
 
-fastQC = "../FastQC/fastqc"
+fastqc_path = "../FastQC/fastqc"
 
 app = Flask(__name__)
 CORS(app) 
@@ -12,13 +12,16 @@ CORS(app)
 @app.route("/fastqc", methods=["POST"])
 def upload_file():
     d = {}
+    options = ['--extract',]
+    
     try:
         file = request.files['fastqc_file']
+        file_name = file.name
+        fastqc_command = "fastqc {} -o {} {}".format(fastqc_path, "fastqc", " ".join(options))
         d['status'] = 1
         
         with tempfile.NamedTemporaryFile(delete=True) as temp_file:
-            temp_file.write(file.read())
-            process = subprocess.Popen([fastQC, '-o', 'output_dir', temp_file.name], stdout=subprocess.PIPE) # AYUDAAAA D:
+            subprocess.run(fastqc_command, shell=True) # No puedo ejecutar el comando en Windows ("fastqc" no se reconoce como un comando interno o externo,)
             output = temp_file.read().decode('utf-8')
             d['result'] = output
     
