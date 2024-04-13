@@ -1,3 +1,3 @@
-- Mejorar interfaz gráfica de los sidepanels
-- Ejecutar fastqc en Windows (Algo complicadillo)
-- Resultados
+- Ejecucion fastqc
+- Paso del archivo subido al siguiente componente
+- Resultados del fastqc

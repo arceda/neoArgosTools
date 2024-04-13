@@ -13,7 +13,7 @@ def fastQCLinux():
 app = Flask(__name__)
 CORS(app) 
 
-@app.route("/fastqc", methods=["POST"])
+@app.route("/upload", methods=["POST"])
 def upload_file():
     d = {}
     options = ['--extract',]
