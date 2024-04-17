@@ -1,3 +1,3 @@
 - Ejecucion fastqc
-- Paso del archivo subido al siguiente componente
 - Resultados del fastqc
+- Mejora de la interfaz grafica (Botones y distribucion)

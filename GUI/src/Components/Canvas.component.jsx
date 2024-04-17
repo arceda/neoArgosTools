@@ -4,73 +4,108 @@ import { useCanvasContext } from "../Context/Canvas.context";
 import * as go from "gojs";
 import { SidepanelComponent } from "./Sidepanel.component";
 
-const baseURL = "http://127.0.0.1:5000"
+const baseURL = "http://127.0.0.1:5000";
+let filesArray = [];
 
-const uploadFile = async (file) => {
-    console.log(file)
-    if (file != null) {
-        const form = new FormData();
-        form.append("fastqc_file", file); //Update para el endpoint
+const uploadFile = (event) => {
+  const fileFormat = {};
 
-        let response = await fetch(baseURL + "/upload",
-            {
-                method: 'post',
-                body: form,
-            }
-        );
-        let res = await response.json();
-        console.log(res)
-        if (res.status !== 1) {
-            //Popup de subida incorrecta o no valida de archivos
-        }
-    }
-}
+  const file = event.target.files[0];
+  if (file) {
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      fileFormat.name = file.name;
+      const content = e.target.result;
+      fileFormat.data = content;
+
+      localStorage.setItem("file", JSON.stringify(fileFormat)); //Se emplea almacenamiento local
+
+      filesArray.push(file); //Para el nombre en la interfaz
+    };
+
+    fileReader.onerror = (e) => {
+      console.error("Error leyendo el archivo:", e);
+    };
+
+    fileReader.readAsDataURL(file);
+  }
+};
+
+const getFiles = () => {
+  let uploadedFiles = JSON.parse(localStorage.getItem("file"));
+  return uploadedFiles;
+};
+
+const fastQC = async () => {
+  const files = getFiles();
+
+  let response = await fetch(baseURL + "/fastqc", {
+    method: "post",
+    body: JSON.stringify(files),
+  });
+
+  let res = await response.json();
+  if (res.status !== 1) {
+    //Popup de subida incorrecta o no valida de archivos
+  }
+};
 
 const formTemplate = () => {
   let inputs = [
     {
-      "tool": "RNA",
-      "components":
-        (<div key={0} style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "20px"
-        }}>
+      tool: "RNA",
+      components: (
+        <div
+          key={0}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
           <label htmlFor={"rna"}>Upload File for Analysis</label>
           <input
             type={"file"}
-            style={{
-
-            }}
+            style={{}}
             id={0}
             name={"rna"}
-            value={""}
-            onChange={(e) => {
-              const { files } = e.target;
-              const file = files[0];
-              if (file) {
-                setData(file);
-                //Mensaje de seleccion correcta
-              } else {
-                //Mensaje de seleccion incorrecta
-              }
-            }}
+            value={(filesArray[0] = !undefined ? filesArray[0] : "")}
+            onChange={(e) => uploadFile(e)}
             accept=".fastq,.fq,.fastq.gz,.fq.gz,.bam,.sam,.cram,.sra,.srx,.fast,.fasta,.fa,.gff,.gtf,.vcf,.vcf.gz,.tsv,.txt,.bed,.wig,.bw,.bb"
           />
-        </div>)
+          <Button
+            variant="outlined"
+            onClick={() => console.log("Archivo subido al local storage")}
+          >
+            Upload File
+          </Button>
+        </div>
+      ),
     },
     {
-      "tool": "FastQC",
-      "components": (
+      tool: "FastQC",
+      components: (
         <div key={1}>
-          <Button variant="outlined" onClick={() => uploadFile(data)}>Execute Tool</Button>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <p>Name of the Selected File:</p>
+            {getFiles().name}
+          </div>
+          <Button variant="outlined" onClick={() => fastQC()}>
+            Analyze Data with FastQC
+          </Button>
         </div>
-      )
-    }
-  ]
+      ),
+    },
+  ];
 
-  return inputs
-}
+  return inputs;
+};
 
 const createDiagram = (initialNodes, setSidebarOpen, setSidebarNodeData) => {
   const $ = go.GraphObject.make;
@@ -85,11 +120,12 @@ const createDiagram = (initialNodes, setSidebarOpen, setSidebarNodeData) => {
         go.Panel,
         "Vertical",
         {
-          click: function (e, obj) { //Abrir el modal
-            let node = obj.part.data
+          click: function (e, obj) {
+            //Abrir el modal
+            let node = obj.part.data;
             setSidebarOpen(true);
             setSidebarNodeData(node);
-          }
+          },
         },
         $(
           go.Picture,
@@ -126,7 +162,11 @@ export const CanvasComponent = () => {
 
   useEffect(() => {
     if (!diagramRef.current) {
-      diagramRef.current = createDiagram(nodes, setSidebarOpen, setSidebarNodeData)
+      diagramRef.current = createDiagram(
+        nodes,
+        setSidebarOpen,
+        setSidebarNodeData
+      );
     }
   }, []);
 
@@ -152,9 +192,16 @@ export const CanvasComponent = () => {
 
   return (
     <>
-      <div id="myDiagramDiv" style={{ width: "100%", height: "100vh", zIndex: "0" }} />
-      <SidepanelComponent formTemplate={formTemplate()} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} panelData={sidebarNodeData} />
+      <div
+        id="myDiagramDiv"
+        style={{ width: "100%", height: "100vh", zIndex: "0" }}
+      />
+      <SidepanelComponent
+        formTemplate={formTemplate()}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        panelData={sidebarNodeData}
+      />
     </>
-
   );
 };
