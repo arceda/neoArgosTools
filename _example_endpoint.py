@@ -3,16 +3,29 @@ from flask import request
 from flask import jsonify
 from flask_cors import CORS, cross_origin 
 import subprocess
+import os
 
 app = Flask(__name__) #instancia
 
 @app.route('/fastqc', methods=['GET', 'POST']) #wrap (decorator)
 @cross_origin()
 def index():
-    result = subprocess.run(['fastqc', '--version'], stdout=subprocess.PIPE)
+    os.system("fastqc FASTQs/*fastq.gz")
+    os.system("mv FASTQs/*.html RESULTS/FASTQC")
+    os.system("mv FASTQs/*.zip RESULTS/FASTQC")
+    
+    """
+    #result = subprocess.run(['fastqc', '--version'], stdout=subprocess.PIPE)
+    result = subprocess.run(['fastqc', '*fastq.gz'], stdout=subprocess.PIPE)
+    #result = subprocess.run(['ls', '-lh'], stdout=subprocess.PIPE)
     result_str = result.stdout.decode('UTF-8')
     print(result.stdout)
-    return jsonify( {"content":result_str} )
+    result = subprocess.run(['mv', '*.html RESULTS/FASTQC'], stdout=subprocess.PIPE)
+    result = subprocess.run(['mv', '*.zip RESULTS/FASTQC'], stdout=subprocess.PIPE)
+    
+    """
+
+    return jsonify( {"content":"OK"} )
 
 if __name__ == '__main__':
     app.run(debug=True, port=8002)
