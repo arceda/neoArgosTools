@@ -2,11 +2,9 @@ import React from "react";
 import { Grid, Box, List, Divider, Typography } from "@mui/material";
 import { CanvasComponent } from "../Components/Canvas.component.jsx";
 import { ButtonComponent } from "../Components/Button.component.jsx";
-import { useCanvasContext } from "../Context/Canvas.context.jsx";
-
+import { v4 as uuidv4 } from "uuid";
+import { createNode } from "../Components/Canvas.component.jsx";
 const CanvasPage = () => {
-  const { addNode, nodes } = useCanvasContext();
-
   const categories = [
     {
       title: "Alignment",
@@ -49,15 +47,7 @@ const CanvasPage = () => {
   ];
 
   const handleButtonClick = (text, image) => {
-    const lastNodeKey = nodes.length > 0 ? nodes[nodes.length - 1].key : 1;
-    const newNodeKey = lastNodeKey + 1;
-
-    addNode({
-      key: newNodeKey,
-      text: text,
-      color: "lightgray",
-      image: image,
-    });
+    createNode(uuidv4().toString(), text, "lightgray", image);
   };
 
   return (

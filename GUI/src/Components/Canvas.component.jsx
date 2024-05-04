@@ -1,75 +1,97 @@
 import React, { useEffect, useRef } from "react";
-import { useCanvasContext } from "../Context/Canvas.context";
 import * as go from "gojs";
 
-const createDiagram = (initialNodes) => {
-  const $ = go.GraphObject.make;
+// Creación de la referencia al diagrama de forma accesible globalmente
+export const diagramRef = React.createRef();
 
-  const myDiagram = $(go.Diagram, "myDiagramDiv", {
-    "undoManager.isEnabled": true,
-    nodeTemplate: $(
-      go.Node,
-      "Auto",
-      { locationSpot: go.Spot.Center },
-      $(
-        go.Panel,
-        "Vertical",
-        $(
-          go.Picture,
-          { width: 50, height: 50, margin: 6 },
-          new go.Binding("source", "image")
-        ),
-        $(
-          go.TextBlock,
-          { margin: 8, editable: true },
-          new go.Binding("text").makeTwoWay()
-        )
-      )
-    ),
-    linkTemplate: $(
-      go.Link,
-      $(go.Shape, { strokeWidth: 2 }),
-      $(go.Shape, { toArrow: "Standard" })
-    ),
-  });
-
-  const model = $(go.GraphLinksModel);
-  model.nodeDataArray = initialNodes;
-  model.linkDataArray = [];
-  myDiagram.model = model;
-
-  return myDiagram;
-};
+export function createNode(key, text, color, image) {
+  const diagram = diagramRef.current;
+  if (diagram) {
+    const newNode = {
+      key: key,
+      text: text,
+      color: color,
+      image: image,
+    };
+    diagram.model.addNodeData(newNode);
+    diagram.updateAllTargetBindings();
+  }
+}
 
 export const CanvasComponent = () => {
-  const diagramRef = useRef(null);
-  const { nodes } = useCanvasContext();
-
   useEffect(() => {
+    const $ = go.GraphObject.make;
+
+    function makePort(name, spot, output, input) {
+      return $(go.Shape, "Circle", {
+        stroke: "black",
+        strokeWidth: 1,
+        desiredSize: new go.Size(7, 7),
+        alignment: spot,
+        alignmentFocus: spot,
+        portId: name,
+        fromSpot: spot,
+        toSpot: spot,
+        fromLinkable: output,
+        toLinkable: input,
+        cursor: "pointer",
+      });
+    }
+
     if (!diagramRef.current) {
-      diagramRef.current = createDiagram(nodes);
+      diagramRef.current = $(go.Diagram, "myDiagramDiv", {
+        "undoManager.isEnabled": true,
+        "draggingTool.dragsLink": true,
+        "linkingTool.isUnconnectedLinkValid": true,
+        "linkingTool.portGravity": 20,
+        "relinkingTool.isUnconnectedLinkValid": true,
+        "relinkingTool.portGravity": 20,
+      });
+
+      diagramRef.current.nodeTemplate = $(
+        go.Node,
+        "Spot",
+        { locationSpot: go.Spot.Center },
+        $(
+          go.Panel,
+          "Vertical",
+          $(
+            go.Picture,
+            { margin: 10, width: 50, height: 50 },
+            new go.Binding("source", "image")
+          ),
+          $(go.TextBlock, { margin: 8 }, new go.Binding("text"))
+        ),
+        makePort("T", go.Spot.Top, true, true),
+        makePort("L", go.Spot.Left, true, true),
+        makePort("R", go.Spot.Right, true, true),
+        makePort("B", go.Spot.Bottom, true, true)
+      );
+
+      diagramRef.current.linkTemplate = $(
+        go.Link,
+        { routing: go.Link.Orthogonal, curve: go.Link.JumpOver },
+        $(
+          go.Shape,
+          { strokeWidth: 2, stroke: "gray" },
+          new go.Binding("stroke"),
+          new go.Binding("strokeWidth")
+        ),
+        $(
+          go.Shape,
+          { toArrow: "Standard", stroke: null, fill: "gray" },
+          new go.Binding("fill")
+        )
+      );
+    }
+
+    if (diagramRef.current) {
+      diagramRef.current.model = new go.GraphLinksModel(
+        [{ key: 0, text: "RNA", color: "lightblue", image: "images/rna.png" }],
+        []
+      );
     }
   }, []);
-
-  useEffect(() => {
-    if (diagramRef.current) {
-      const model = diagramRef.current.model;
-      const addedNode = nodes[nodes.length - 1];
-
-      if (nodes.length > 1) {
-        const lastNode = nodes[nodes.length - 2];
-        const lastNodeId = lastNode.key;
-
-        model.addNodeData(addedNode);
-
-        const lastNodeKey = lastNodeId;
-        const newNodeKey = addedNode.key;
-
-        model.addLinkData({ from: lastNodeKey, to: newNodeKey });
-      }
-    }
-    console.log(nodes);
-  }, [nodes]);
 
   return (
     <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }}></div>
