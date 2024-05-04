@@ -42,6 +42,9 @@ const fastQC = async () => {
   let response = await fetch(baseURL + "/fastqc", {
     method: "post",
     body: JSON.stringify(files),
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
   let res = await response.json();
