@@ -97,7 +97,7 @@ const formTemplate = () => {
             }}
           >
             <p>Name of the Selected File:</p>
-            {getFiles().name}
+            {getFiles() != null ? getFiles()?.name : "Not file selected yet"}
           </div>
           <Button variant="outlined" onClick={() => fastQC()}>
             Analyze Data with FastQC
