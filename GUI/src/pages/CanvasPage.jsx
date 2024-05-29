@@ -51,23 +51,38 @@ const CanvasPage = () => {
   };
 
   return (
-    <Grid container spacing={0} sx={{ height: "100vh", margin: 0, padding: 0 }}>
+    <Grid container spacing={0}>
       <Box
         sx={{
           padding: 0,
-          borderRight: "1px solid #ccc",
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
+          height: "100vh",
+          overflowY: "auto",
+          width: "300px",
         }}
       >
         {categories.map((category, categoryIndex) => (
-          <div key={categoryIndex}>
-            <Typography
-              variant="subtitle1"
-              sx={{ paddingLeft: 1, paddingTop: 1 }}
+          <div
+            key={categoryIndex}
+            style={{
+              marginBottom: "10px",
+              border: "2px solid #4caf50",
+            }}
+          >
+            <Box
+              sx={{
+                background: "#e8f5e9",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 1,
+              }}
             >
-              {category.title}
-            </Typography>
+              <Typography variant="subtitle1">{category.title}</Typography>
+            </Box>
+
             <List
               sx={{
                 display: "grid",
@@ -88,7 +103,8 @@ const CanvasPage = () => {
           </div>
         ))}
       </Box>
-      <Box sx={{ padding: 0, flex: 1 }}>
+
+      <Box sx={{ padding: 0, flex: 1, height: "100vh" }}>
         <CanvasComponent />
       </Box>
     </Grid>
