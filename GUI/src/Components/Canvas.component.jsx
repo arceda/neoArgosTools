@@ -1,8 +1,12 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import * as go from "gojs";
+import { SidepanelComponent } from "./Sidepanel.component";
+import { Button } from "@mui/material";
 
-// Creación de la referencia al diagrama de forma accesible globalmente
 export const diagramRef = React.createRef();
+
+const baseURL = "http://127.0.0.1:3000";
+let filesArray = [];
 
 export function createNode(key, text, color, image) {
   const diagram = diagramRef.current;
@@ -18,7 +22,100 @@ export function createNode(key, text, color, image) {
   }
 }
 
+const uploadFile = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    filesArray.push(file); //Para el nombre en la interfaz
+  }
+};
+
+const fastQC = async () => {
+  const formData = new FormData();
+
+  filesArray.forEach((file, index) => {
+    formData.append("fastqc_file", file);
+  });
+
+  let response = await fetch(baseURL + "/fastqc", {
+    method: "post",
+    body: formData,
+  });
+
+  if (response.ok) {
+    let htmlResponse = await response.text();
+    let fastqcResponseElement = document.getElementById("fastqcResponse");
+    if (fastqcResponseElement) {
+      fastqcResponseElement.innerHTML = htmlResponse;
+    } else {
+      console.error("Element with id 'fastqcResponse' not found");
+    }
+  } else {
+    console.error("Failed to fetch fastqc data");
+  }
+};
+
+const formTemplate = () => {
+  let inputs = [
+    {
+      tool: "RNA",
+      components: (
+        <div
+          key={0}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          <label htmlFor={"rna"}>Upload File for Analysis</label>
+          <input
+            type={"file"}
+            id={0}
+            name={"rna"}
+            onChange={uploadFile}
+            accept=".fastq,.fq,.fastq.gz,.fq.gz,.bam,.sam,.cram,.sra,.srx,.fast,.fasta,.fa,.gff,.gtf,.vcf,.vcf.gz,.tsv,.txt,.bed,.wig,.bw,.bb"
+          />
+          <Button
+            variant="outlined"
+            onClick={() => console.log("Archivo subido al local storage")}
+          >
+            Upload File
+          </Button>
+          <div id="fastqcResponse"></div>
+        </div>
+      ),
+    },
+    {
+      tool: "FastQC",
+      components: (
+        <div key={1}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "5px",
+            }}
+          >
+            <p>Name of the Selected File:</p>
+            {filesArray.length > 0
+              ? filesArray[0].name
+              : "No file selected yet"}
+          </div>
+          <Button variant="outlined" onClick={fastQC}>
+            Analyze Data with FastQC
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
+  return inputs;
+};
+
 export const CanvasComponent = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarNodeData, setSidebarNodeData] = useState(null);
+
   useEffect(() => {
     const $ = go.GraphObject.make;
 
@@ -55,6 +152,14 @@ export const CanvasComponent = () => {
         $(
           go.Panel,
           "Vertical",
+          {
+            click: function (e, obj) {
+              //Abrir el modal
+              let node = obj.part.data;
+              setSidebarOpen(true);
+              setSidebarNodeData(node);
+            },
+          },
           $(
             go.Picture,
             { margin: 10, width: 50, height: 50 },
@@ -94,6 +199,17 @@ export const CanvasComponent = () => {
   }, []);
 
   return (
-    <div id="myDiagramDiv" style={{ width: "100%", height: "100vh" }}></div>
+    <>
+      <div
+        id="myDiagramDiv"
+        style={{ width: "100%", height: "100vh", zIndex: "0" }}
+      />
+      <SidepanelComponent
+        formTemplate={formTemplate()}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        panelData={sidebarNodeData}
+      />
+    </>
   );
 };
