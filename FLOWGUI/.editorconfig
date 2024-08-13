@@ -1,0 +1,4 @@
+# 4 space indentation
+[*.jsx]
+indent_style = space
+indent_size = 4
