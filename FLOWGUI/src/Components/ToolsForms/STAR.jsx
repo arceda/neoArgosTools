@@ -1,62 +1,47 @@
 // SimpleForm.jsx
 import React from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { TextField, Box, Button, Divider } from '@mui/material';
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
 
+import IndexFormSTAR from './STARindexForm';
+import ProcessFormSTAR from './STARprocessForm';
 
 const SimpleFormSTAR = ({ formData, onFormDataChange, setLoading}) => {    
-    const handleSubmit = async () => {
-        setLoading(true)
-        try {
-            console.log(formData)
-            const response = await axios.post('http://localhost:5000/star', {
-                threads: formData.threads,
-                star_options: formData.star_options,
-            });
+    const [value, setValue] = React.useState('1');
 
-            if (response.data.status === 1) {
-                setLoading(false);
-                toast.success(response.data.message);
-            } else {
-                setLoading(false);
-                toast.error('Error: ' + response.data.message);
-            }
-        } catch (err) {
-            toast.error('Hubo un error');
-            console.error(err);
-        }
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        onFormDataChange({
-            ...formData,
-            [name]: value
-        })          
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
     };
     
     return (
-        <Box 
-            component="form" 
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 300, margin: '0 auto', mt:2 }}
-        >
-            <TextField
-                label="Número de Hilos"
-                name="threads"
-                type='number'
-                value={formData.threads}
-                onChange={handleChange}
-                required
-            />
+        <Box sx={{ display: 'flex', flexDirection: 'column', maxWidth: 300, m:1}}>
+        <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="INDEXAR" value="1" />
+                <Tab label="PROCESAR" value="2" />
+            </TabList>
+            </Box>
+            <TabPanel value="1">
+                <IndexFormSTAR
+                    formData={formData}
+                    onFormDataChange={onFormDataChange}
+                    setLoading={setLoading}
+                    handleChangeTab={setValue}
+                />
+            </TabPanel>
+            <TabPanel value="2">
+                <ProcessFormSTAR
+                    formData={formData}
+                    onFormDataChange={onFormDataChange}
+                    setLoading={setLoading}
+                />
+            </TabPanel>
+        </TabContext>
 
-            <Button
-                variant="contained"
-                onClick={handleSubmit}
-            >
-                Procesar
-            </Button>
         </Box>
     );
 };
