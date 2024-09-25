@@ -39,7 +39,10 @@ const DnDFlow = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [nodeToAdd, setNodeToAdd] = useState(null);
 
-    /* Alert */
+    console.log(edges)
+    console.log(selectedNode)
+
+    // Alert state
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const [dialogInfo, setDialogInfo] = useState({ title: "", content: "" });
 
@@ -53,15 +56,14 @@ const DnDFlow = () => {
     };
 
     const handleReplaceNode = () => {
-        var newNodes = []
+        var newNodes = [];
         
-        if (nodeToAdd.data.name == "BWA"){
+        if (nodeToAdd.data.name === "BWA"){
             newNodes = nodes.filter(node => node.data.name !== "Star");
         }
-        if (nodeToAdd.data.name == "Star"){
+        if (nodeToAdd.data.name === "Star"){
             newNodes = nodes.filter(node => node.data.name !== "BWA");
-
-            console.log(newNodes)
+            console.log(newNodes);
         }
         
         setNodes([...newNodes, nodeToAdd]);
@@ -74,7 +76,7 @@ const DnDFlow = () => {
         handleCloseDialog();
     };
 
-    /* NODES FUNCTIONS */
+    // Handle node click and set selected node
     const handleNodeClick = (node) => {
         setSelectedNode(node);
     };
@@ -109,6 +111,7 @@ const DnDFlow = () => {
         event.dataTransfer.dropEffect = 'move';
     }, []);
 
+    // Alignment validation
     const aligmentValidation = (newNode, currentNodes) => {
         if (newNode.data.name === "BWA") {
             const starCount = currentNodes.filter(node => node.data.name === "Star").length;
@@ -165,6 +168,7 @@ const DnDFlow = () => {
         [screenToFlowPosition, aligmentValidation, nodes],
     );
 
+    // Handle form data change
     const handleFormDataChange = (newFormData) => {
         const newNodeData = [...nodesData];
         const newNode = newNodeData.find((node) => node.id === selectedNode.id);
@@ -172,7 +176,15 @@ const DnDFlow = () => {
         setNodesData(newNodeData);
     };
 
+    // Loading state
     const [loading, setLoading] = useState(false);
+
+    // Get sources of edges where the selected node is the target
+    const sourcesOfSelectedNode = selectedNode
+        ? edges
+              .filter(edge => edge.target === selectedNode.id)
+              .map(edge => edge.source)
+        : [];
 
     return (
         <Fragment>
@@ -206,8 +218,11 @@ const DnDFlow = () => {
                     toolName={selectedNode?.data?.name}
                     onClose={onCloseRightBar}
                     formData={selectedNode?.data?.formData}
+                    id={selectedNode?.id}
                     onFormDataChange={handleFormDataChange}
                     setLoading={setLoading}
+                    loading={loading}
+                    sources={sourcesOfSelectedNode} // Pass sources here
                 />
             </div>
             <AlertDialogSlide
@@ -222,11 +237,12 @@ const DnDFlow = () => {
                 sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={loading}
             >
-            <CircularProgress color="inherit" />
+                <CircularProgress color="inherit" />
             </Backdrop>
         </Fragment>
     );
 };
+
 
 export default () => (
     <ReactFlowProvider>

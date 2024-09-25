@@ -61,6 +61,9 @@ export const aligment = [
             formData: {
                 threads: '',
                 star_options: '',
+                indexing: '',
+                sjdbGTF:'',
+                genomefasta: '',
             },
         },
     },

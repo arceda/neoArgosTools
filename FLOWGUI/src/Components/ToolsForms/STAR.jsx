@@ -9,7 +9,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import IndexFormSTAR from './STARindexForm';
 import ProcessFormSTAR from './STARprocessForm';
 
-const SimpleFormSTAR = ({ formData, onFormDataChange, setLoading}) => {    
+const SimpleFormSTAR = ({ formData, onFormDataChange, setLoading, loading, id, sources}) => {    
     const [value, setValue] = React.useState('1');
 
     const handleChange = (event, newValue) => {
@@ -30,7 +30,9 @@ const SimpleFormSTAR = ({ formData, onFormDataChange, setLoading}) => {
                     formData={formData}
                     onFormDataChange={onFormDataChange}
                     setLoading={setLoading}
+                    loading={loading}
                     handleChangeTab={setValue}
+                    id={id}
                 />
             </TabPanel>
             <TabPanel value="2">
@@ -38,6 +40,7 @@ const SimpleFormSTAR = ({ formData, onFormDataChange, setLoading}) => {
                     formData={formData}
                     onFormDataChange={onFormDataChange}
                     setLoading={setLoading}
+                    sources={sources}
                 />
             </TabPanel>
         </TabContext>

@@ -12,7 +12,7 @@ import SimpleFormSTAR from './ToolsForms/STAR';
 const drawerWidth = 300;
 const minDrawer = 120;
 
-export default function RightBar({ open, toolName, onClose, formData, onFormDataChange, setLoading}) {
+export default function RightBar({ open, toolName, onClose, formData, onFormDataChange, setLoading, loading, id, sources}) {
     return (
         <Drawer
             sx={{
@@ -46,7 +46,16 @@ export default function RightBar({ open, toolName, onClose, formData, onFormData
             <Divider />
             {toolName === "FastQC" && <SimpleForm formData={formData} onFormDataChange={onFormDataChange} />}
             {toolName === "BWA" && <SimpleFormBWA formData={formData} onFormDataChange={onFormDataChange} />}
-            {toolName === "Star" && <SimpleFormSTAR formData={formData} onFormDataChange={onFormDataChange} setLoading={setLoading}/>}
+            {toolName === "Star" && 
+                <SimpleFormSTAR 
+                    formData={formData}
+                    onFormDataChange={onFormDataChange}
+                    setLoading={setLoading}
+                    loading={loading}
+                    id={id}
+                    sources={sources}
+                />
+            }
         </Drawer>
     );
 }

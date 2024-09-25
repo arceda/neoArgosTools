@@ -4,16 +4,22 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { TextField, Box, Button } from '@mui/material';
 
-const ProcessFormSTAR = ({ formData, onFormDataChange, setLoading}) => {    
+const ProcessFormSTAR = ({ formData, onFormDataChange, setLoading, sources}) => {    
 
+    console.log(sources)
     const handleSubmit = async () => {
+        console.log("-----------")
         console.log(formData)
+        console.log(sources)
         setLoading(true)
         try {
             console.log(formData)
+            const indexingPath = formData.indexing.startsWith('.') ? formData.indexing : `./other/${formData.indexing}`;
+            console.log(indexingPath)
             const response = await axios.post('http://localhost:5000/star', {
                 threads: formData.threads,
                 star_options: formData.star_options,
+                indexing: indexingPath,
             });
 
             if (response.data.status === 1) {

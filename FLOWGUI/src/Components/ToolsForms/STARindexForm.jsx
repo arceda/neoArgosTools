@@ -2,28 +2,15 @@
 import React, { Fragment } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import FileDropZone from '../Uploadfile';
 import { FormControl, Box, Button, FormControlLabel, Radio, RadioGroup, FormLabel, TextField } from '@mui/material';
 
-const IndexFormSTAR = ({ formData, onFormDataChange, setLoading, handleChangeTab }) => { 
+const IndexFormSTAR = ({ formData, onFormDataChange, setLoading, loading, handleChangeTab, id }) => { 
     
     const [value, setValue] = React.useState(formData.indexing);
 
     const handleSubmit = async () => {
-
-        if (value == "Otro"){
-            setLoading(true)
-            try {
-                console.log(formData)
-                setLoading(false);
-    
-            } catch (err) {
-                setLoading(false);
-                toast.error('Hubo un error');
-                console.error(err);
-            }
-        } else {
-            handleChangeTab("2")
-        }
+        handleChangeTab("2")
     }
 
     const handleChange = (e) => {
@@ -57,20 +44,25 @@ const IndexFormSTAR = ({ formData, onFormDataChange, setLoading, handleChangeTab
                 </RadioGroup>
 
                 {value=="Otro" && 
-                    <TextField
-                        label="Enlace"
-                        name="enlace"
-                        required
-                    />
+                    <FileDropZone 
+                        handleChangeTab={handleChangeTab}
+                        loading={loading}
+                        setLoading={setLoading}
+                        formData={formData}
+                        onFormDataChange={onFormDataChange}
+                        id={id}
+                    >
+                    </FileDropZone>
                 }
             </FormControl>
 
+            {value != "Otro" &&
             <Button
                 variant="contained"
                 onClick={handleSubmit}
             >
-                {value == "Otro" ? "Indexar" : "Continuar"}
-            </Button>
+                {"Continuar"}
+            </Button>}
         </Box>
     );
 };
