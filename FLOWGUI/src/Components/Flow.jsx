@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, Fragment, useState } from 'react';
+import React, { useRef, useCallback, Fragment, useState } from "react";
 import {
     ReactFlow,
     ReactFlowProvider,
@@ -10,14 +10,15 @@ import {
     Background,
     MiniMap,
     reconnectEdge,
-} from 'reactflow';
-import CustomNode from './CustomNode';
-import RightBar from './RightBar';
-import AlertDialogSlide from './AlertDialog';
-import { Backdrop } from '@mui/material';
+} from "reactflow";
+import CustomNode from "./CustomNode";
+import RightBar from "./RightBar";
+import AlertDialogSlide from "./AlertDialog";
+import { Backdrop } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
+import { FaSave, FaUpload } from "react-icons/fa"; // Importa los íconos de guardar y subir
 
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -29,6 +30,45 @@ const nodeTypes = {
 const initialNodes = [];
 const initialEdges = [];
 
+const SaveControl = ({ onSave }) => {
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px",
+                cursor: "pointer",
+            }}
+            onClick={onSave}
+            title="Guardar Flujo"
+        >
+            <FaSave size={11} />
+        </div>
+    );
+};
+
+const UploadControl = ({ onUpload }) => {
+    return (
+        <label
+            style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "8px",
+                cursor: "pointer",
+            }}
+            title="Cargar Flujo"
+        >
+            <FaUpload size={11} />
+            <input
+                type="file"
+                accept=".json"
+                onChange={onUpload}
+                style={{ display: "none" }}
+            />
+        </label>
+    );
+};
+
 const DnDFlow = () => {
     const reactFlowWrapper = useRef(null);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
@@ -39,8 +79,8 @@ const DnDFlow = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [nodeToAdd, setNodeToAdd] = useState(null);
 
-    console.log(edges)
-    console.log(selectedNode)
+    console.log(edges);
+    console.log(selectedNode);
 
     // Alert state
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
@@ -57,15 +97,15 @@ const DnDFlow = () => {
 
     const handleReplaceNode = () => {
         var newNodes = [];
-        
-        if (nodeToAdd.data.name === "BWA"){
-            newNodes = nodes.filter(node => node.data.name !== "Star");
+
+        if (nodeToAdd.data.name === "BWA") {
+            newNodes = nodes.filter((node) => node.data.name !== "Star");
         }
-        if (nodeToAdd.data.name === "Star"){
-            newNodes = nodes.filter(node => node.data.name !== "BWA");
+        if (nodeToAdd.data.name === "Star") {
+            newNodes = nodes.filter((node) => node.data.name !== "BWA");
             console.log(newNodes);
         }
-        
+
         setNodes([...newNodes, nodeToAdd]);
         setNodesData([...newNodes, nodeToAdd]);
         handleCloseDialog();
@@ -82,15 +122,18 @@ const DnDFlow = () => {
     };
 
     const onCloseRightBar = () => {
-        setNodes((nodes) => nodes.map(node => ({
-            ...node,
-            selected: false,
-        })));
+        setNodes((nodes) =>
+            nodes.map((node) => ({
+                ...node,
+                selected: false,
+            }))
+        );
         setSelectedNode(null);
     };
 
     const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
+        (params) =>
+            setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
         []
     );
 
@@ -108,24 +151,34 @@ const DnDFlow = () => {
 
     const onDragOver = useCallback((event) => {
         event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
+        event.dataTransfer.dropEffect = "move";
     }, []);
 
     // Alignment validation
     const aligmentValidation = (newNode, currentNodes) => {
         if (newNode.data.name === "BWA") {
-            const starCount = currentNodes.filter(node => node.data.name === "Star").length;
+            const starCount = currentNodes.filter(
+                (node) => node.data.name === "Star"
+            ).length;
             if (starCount > 0) {
-                handleOpenAlert("Hmmm.... Solo se puede tener 1 herramienta de alineación", "La herramienta BWA reemplazará a STAR");
+                handleOpenAlert(
+                    "Hmmm.... Solo se puede tener 1 herramienta de alineación",
+                    "La herramienta BWA reemplazará a STAR"
+                );
                 setNodeToAdd(newNode);
                 return false;
             }
         }
 
         if (newNode.data.name === "Star") {
-            const bwaCount = currentNodes.filter(node => node.data.name === "BWA").length;
+            const bwaCount = currentNodes.filter(
+                (node) => node.data.name === "BWA"
+            ).length;
             if (bwaCount > 0) {
-                handleOpenAlert("Hmmm.... Solo se puede tener 1 herramienta de alineación", "La herramienta STAR reemplazará a BWA");
+                handleOpenAlert(
+                    "Hmmm.... Solo se puede tener 1 herramienta de alineación",
+                    "La herramienta STAR reemplazará a BWA"
+                );
                 setNodeToAdd(newNode);
                 return false;
             }
@@ -137,7 +190,9 @@ const DnDFlow = () => {
         (event) => {
             event.preventDefault();
 
-            const nodeDataString = event.dataTransfer.getData('application/reactflow');
+            const nodeDataString = event.dataTransfer.getData(
+                "application/reactflow"
+            );
             const nodeData = JSON.parse(nodeDataString);
 
             if (!nodeData) {
@@ -151,7 +206,7 @@ const DnDFlow = () => {
 
             const newNode = {
                 id: getId(),
-                type: 'customNode',
+                type: "customNode",
                 position,
                 data: nodeData,
             };
@@ -165,7 +220,7 @@ const DnDFlow = () => {
             setNodes((nds) => nds.concat(newNode));
             setNodesData((nds) => nds.concat(newNode));
         },
-        [screenToFlowPosition, aligmentValidation, nodes],
+        [screenToFlowPosition, aligmentValidation, nodes]
     );
 
     // Handle form data change
@@ -182,9 +237,40 @@ const DnDFlow = () => {
     // Get sources of edges where the selected node is the target
     const sourcesOfSelectedNode = selectedNode
         ? edges
-              .filter(edge => edge.target === selectedNode.id)
-              .map(edge => edge.source)
+              .filter((edge) => edge.target === selectedNode.id)
+              .map((edge) => edge.source)
         : [];
+
+    const saveFlowToJson = () => {
+        const flow = {
+            nodes,
+            edges,
+        };
+        const json = JSON.stringify(flow, null, 2);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "flow.json";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
+    const uploadFlowFromJson = (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const flow = JSON.parse(e.target.result);
+            setNodes(flow.nodes);
+            setEdges(flow.edges);
+            setNodesData(flow.nodes); // Actualiza los datos de los nodos
+        };
+        reader.readAsText(file);
+    };
 
     return (
         <Fragment>
@@ -209,7 +295,10 @@ const DnDFlow = () => {
                         fitView
                     >
                         <Background />
-                        <Controls />
+                        <Controls>
+                            <SaveControl onSave={saveFlowToJson} />
+                            <UploadControl onUpload={uploadFlowFromJson} />
+                        </Controls>
                         <MiniMap />
                     </ReactFlow>
                 </div>
@@ -234,7 +323,10 @@ const DnDFlow = () => {
                 onCancel={handleCancelNodeAddition}
             />
             <Backdrop
-                sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                sx={{
+                    color: "#fff",
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
                 open={loading}
             >
                 <CircularProgress color="inherit" />
@@ -242,7 +334,6 @@ const DnDFlow = () => {
         </Fragment>
     );
 };
-
 
 export default () => (
     <ReactFlowProvider>
