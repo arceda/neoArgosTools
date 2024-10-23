@@ -5,7 +5,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export const Rna = ({ type, formData, onFormDataChange }) => {
+export const Rna = ({ type, formData, onFormDataChange, id }) => {
     const [url, setUrl] = useState("");
     const [file, setFile] = useState(null);
 
@@ -42,6 +42,8 @@ export const Rna = ({ type, formData, onFormDataChange }) => {
         if (url) {
             formDataToSend.append("url", url);
         }
+
+        formDataToSend.append("id", id);
 
         try {
             const response = await axios.post(
