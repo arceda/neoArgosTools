@@ -39,9 +39,6 @@ const DnDFlow = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [nodeToAdd, setNodeToAdd] = useState(null);
 
-    console.log(edges)
-    console.log(selectedNode)
-
     // Alert state
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
     const [dialogInfo, setDialogInfo] = useState({ title: "", content: "" });
@@ -186,6 +183,13 @@ const DnDFlow = () => {
               .map(edge => edge.source)
         : [];
 
+    const infoSourcesSelectedNode = sourcesOfSelectedNode.length > 0 
+    ? sourcesOfSelectedNode.map(sourceId => {
+        const sourceNode = nodes.find(node => node.id === sourceId);
+        return sourceNode ? sourceNode : null;  // Get the name of the source node
+    })
+    : [];
+
     return (
         <Fragment>
             <div className="dndflow">
@@ -222,7 +226,7 @@ const DnDFlow = () => {
                     onFormDataChange={handleFormDataChange}
                     setLoading={setLoading}
                     loading={loading}
-                    sources={sourcesOfSelectedNode} // Pass sources here
+                    sources={infoSourcesSelectedNode} // Pass sources here
                 />
             </div>
             <AlertDialogSlide

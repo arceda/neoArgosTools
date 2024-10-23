@@ -9,17 +9,20 @@ const ProcessFormSTAR = ({ formData, onFormDataChange, setLoading, sources}) => 
     console.log(sources)
     const handleSubmit = async () => {
         console.log("-----------")
-        console.log(formData)
-        console.log(sources)
+        const source = sources.filter(node => node.data.name == "FastQC")
         setLoading(true)
+        
         try {
-            console.log(formData)
-            const indexingPath = formData.indexing.startsWith('.') ? formData.indexing : `./other/${formData.indexing}`;
+            const indexingPath = formData.indexing.startsWith('.') ? formData.indexing : `./static/InputFiles/STAR/other/${formData.indexing}`;
+
             console.log(indexingPath)
+            console.log(source[0].id)
+
             const response = await axios.post('http://localhost:5000/star', {
                 threads: formData.threads,
                 star_options: formData.star_options,
                 indexing: indexingPath,
+                fastaid: source[0].id
             });
 
             if (response.data.status === 1) {
