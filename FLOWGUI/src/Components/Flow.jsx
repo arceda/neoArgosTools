@@ -1,4 +1,10 @@
-import React, { useRef, useCallback, Fragment, useState } from "react";
+import React, {
+    useRef,
+    useCallback,
+    Fragment,
+    useState,
+    useEffect,
+} from "react";
 import {
     ReactFlow,
     ReactFlowProvider,
@@ -79,8 +85,18 @@ const DnDFlow = () => {
     const [selectedNode, setSelectedNode] = useState(null);
     const [nodeToAdd, setNodeToAdd] = useState(null);
 
-    console.log(edges);
-    console.log(selectedNode);
+    useEffect(() => {
+        if (selectedNode) {
+            let output = infoSourcesSelectedNode
+                .map((node) => node.data.formData.output)
+                .flat();
+
+            let formdata = selectedNode.data.formData;
+            formdata.input = output;
+            handleFormDataChange(formdata);
+            console.log(selectedNode);
+        }
+    }, [selectedNode]);
 
     // Alert state
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
@@ -241,12 +257,13 @@ const DnDFlow = () => {
               .map((edge) => edge.source)
         : [];
 
-    const infoSourcesSelectedNode = sourcesOfSelectedNode.length > 0 
-    ? sourcesOfSelectedNode.map(sourceId => {
-        const sourceNode = nodes.find(node => node.id === sourceId);
-        return sourceNode ? sourceNode : null;  // Get the name of the source node
-    })
-    : [];
+    const infoSourcesSelectedNode =
+        sourcesOfSelectedNode.length > 0
+            ? sourcesOfSelectedNode.map((sourceId) => {
+                  const sourceNode = nodes.find((node) => node.id === sourceId);
+                  return sourceNode ? sourceNode : null; // Get the name of the source node
+              })
+            : [];
 
     const saveFlowToJson = () => {
         const flow = {

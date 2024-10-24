@@ -8,7 +8,7 @@ export const samples = [
       connectors: ["input"],
       formData: {
         name_file: "",
-        output: "",
+        output: [""],
       },
     },
   },
@@ -21,7 +21,7 @@ export const samples = [
       connectors: ["input"],
       formData: {
         name_file: "",
-        output: "",
+        output: [""],
       },
     },
   },
@@ -36,8 +36,8 @@ export const quality = [
       color: "#beffa4",
       connectors: ["default"],
       formData: {
-        firstName: "",
-        lastName: "",
+        input: [],
+        output: [],
       },
     },
   },

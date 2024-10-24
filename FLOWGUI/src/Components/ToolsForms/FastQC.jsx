@@ -6,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 export const FastQc = ({ formData, onFormDataChange }) => {
     const [htmlPath, setHtmlPath] = useState("");
-    console.log(formData);
     const handleEvaluate = async () => {
         try {
             const response = await axios.post(

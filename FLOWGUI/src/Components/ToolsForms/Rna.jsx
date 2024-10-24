@@ -59,7 +59,7 @@ export const Rna = ({ type, formData, onFormDataChange }) => {
             onFormDataChange({
                 ...formData,
                 name_file: file ? file.name : "",
-                output: `${filePath}`,
+                output: [`${filePath}`],
             });
             toast.success("Archivo cargado con éxito.");
         } catch (error) {
