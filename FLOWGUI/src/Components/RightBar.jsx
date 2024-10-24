@@ -28,6 +28,7 @@ export default function RightBar({
     onClose,
     formData,
     onFormDataChange,
+    id
 }) {
     const ToolEntry = TOOLS[toolName] || { Component: null, props: {} };
     const { Component: ToolComponent, props } = ToolEntry;
@@ -99,6 +100,7 @@ export default function RightBar({
             {ToolComponent &&
                 React.createElement(ToolComponent, {
                     ...props,
+                    id,
                     formData,
                     onFormDataChange,
                 })}
