@@ -8,7 +8,7 @@ export const samples = [
       connectors: ["input"],
       formData: {
         name_file: "",
-        output: [""],
+        output: ["normal"],
       },
     },
   },
@@ -21,7 +21,7 @@ export const samples = [
       connectors: ["input"],
       formData: {
         name_file: "",
-        output: [""],
+        output: ["tumor"],
       },
     },
   },

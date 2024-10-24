@@ -87,16 +87,38 @@ const DnDFlow = () => {
 
     useEffect(() => {
         if (selectedNode) {
-            let output = infoSourcesSelectedNode
-                .map((node) => node.data.formData.output)
-                .flat();
-
+            let output;
             let formdata = selectedNode.data.formData;
+
+            if (selectedNode.data.name == "Star") {
+                output = findRna(selectedNode);
+            } else {
+                output = getInfoSourcesOfAnyNode(selectedNode)
+                    .map((node) => node.data.formData.output)
+                    .flat();
+            }
+
             formdata.input = output;
             handleFormDataChange(formdata);
-            console.log(selectedNode);
         }
     }, [selectedNode]);
+
+    const findRna = (node) => {
+        let output = [];
+        let sources = getInfoSourcesOfAnyNode(node);
+        sources.forEach((node) => {
+            if (
+                node.data.name === "RNA normal" ||
+                node.data.name === "RNA tumor"
+            ) {
+                output.push(node.data.formData.output);
+            } else {
+                output = output.concat(findRna(node));
+            }
+        });
+
+        return output.flat();
+    };
 
     // Alert state
     const [openAlertDialog, setOpenAlertDialog] = useState(false);
@@ -251,19 +273,23 @@ const DnDFlow = () => {
     const [loading, setLoading] = useState(false);
 
     // Get sources of edges where the selected node is the target
-    const sourcesOfSelectedNode = selectedNode
-        ? edges
-              .filter((edge) => edge.target === selectedNode.id)
-              .map((edge) => edge.source)
-        : [];
+    const getSourcesOfAnyNode = (node) => {
+        return node
+            ? edges
+                  .filter((edge) => edge.target === node.id)
+                  .map((edge) => edge.source)
+            : [];
+    };
 
-    const infoSourcesSelectedNode =
-        sourcesOfSelectedNode.length > 0
-            ? sourcesOfSelectedNode.map((sourceId) => {
+    const getInfoSourcesOfAnyNode = (node) => {
+        const sources = getSourcesOfAnyNode(node);
+        return sources.length > 0
+            ? sources.map((sourceId) => {
                   const sourceNode = nodes.find((node) => node.id === sourceId);
-                  return sourceNode ? sourceNode : null; // Get the name of the source node
+                  return sourceNode ? sourceNode : null; // Get the source node object
               })
             : [];
+    };
 
     const saveFlowToJson = () => {
         const flow = {
@@ -335,7 +361,7 @@ const DnDFlow = () => {
                     onFormDataChange={handleFormDataChange}
                     setLoading={setLoading}
                     loading={loading}
-                    sources={infoSourcesSelectedNode} // Pass sources here
+                    sources={getInfoSourcesOfAnyNode(selectedNode)} // Pass sources here
                 />
             </div>
             <AlertDialogSlide
