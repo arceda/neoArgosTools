@@ -1,0 +1,10 @@
+{
+  "name": "Proyecto Neargos Tools",
+  "image": "jeanpaul1005/proyectoneargostools:v0.0.3",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/python:1": {}
+  },
+  "postCreateCommand": "echo 'Entorno configurado'", // Puedes agregar comandos adicionales aquí
+  "remoteUser": "root" // O el usuario que estés utilizando en el contenedor
+}
