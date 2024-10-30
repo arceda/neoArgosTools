@@ -81,6 +81,8 @@ const DnDFlow = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
     const { screenToFlowPosition } = useReactFlow();
 
+    console.log(nodes)
+
     const [nodesData, setNodesData] = useState([]);
     const [selectedNode, setSelectedNode] = useState(null);
     const [nodeToAdd, setNodeToAdd] = useState(null);

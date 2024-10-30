@@ -1,5 +1,6 @@
 import { Rna } from "./Rna";
 import { FastQc } from "./FastQC";
+import { STAR } from "./STAR";
 
 export const TOOLS = {
   "RNA tumor": {
@@ -12,6 +13,10 @@ export const TOOLS = {
   },
   FastQC: {
     Component: FastQc,
+    props: {},
+  },
+  Star: {
+    Component: STAR,
     props: {},
   },
 };

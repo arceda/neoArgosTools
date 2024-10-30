@@ -28,6 +28,9 @@ export default function RightBar({
     onClose,
     formData,
     onFormDataChange,
+    setLoading,
+    sources,
+    loading,
     id
 }) {
     const ToolEntry = TOOLS[toolName] || { Component: null, props: {} };
@@ -103,6 +106,9 @@ export default function RightBar({
                     id,
                     formData,
                     onFormDataChange,
+                    setLoading,
+                    sources,
+                    loading,
                 })}
             <Divider />
 

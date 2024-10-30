@@ -37,7 +37,7 @@ export const quality = [
       connectors: ["default"],
       formData: {
         input: [],
-        output: [],
+        output: ["./static/InputFiles/RNAnormal/dnd_node0", "./static/InputFiles/RNAtumor/dnd_node1"], /* ["./static/InputFiles/RNAnormal/dnd_node0", "./static/InputFiles/RNAnormal/dnd_node1"] */
       },
     },
   },
@@ -78,6 +78,7 @@ export const aligment = [
         indexing: "",
         sjdbGTF: "",
         genomefasta: "",
+        output: [],
       },
     },
   },
