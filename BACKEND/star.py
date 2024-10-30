@@ -6,8 +6,8 @@ from flask_cors import CORS, cross_origin
 
 # Define paths
 star_path = "/usr/local/bin/STAR"  # Ensure this path is correct in your container
-fastq_input_dir = "../FASTQs/"  # Use the absolute path in the container
-results_output_dir = "../RESULTS/STAR/"  # Use the absolute path in the container
+#fastq_input_dir = "./static/InputFiles/RNAnormal"  # Use the absolute path in the container
+results_output_dir = "./static/OutputFiles/STAR/"  # Use the absolute path in the container
 genome_dir = "./reference_chr15"  # Ensure this path is correct in your container
 
 app = Flask(__name__)
@@ -18,11 +18,17 @@ CORS(app)
 def run_star():
     data = request.json
     threads = data.get('threads', '')
+    fastaqc_output = data.get('fastaqcoutput', '') 
     indexing = data.get('indexing', genome_dir)
     star_options = data.get('star_options', '')
+    star_node_id = data.get('nodeid', '')
+    node_type = data.get('rnatype', '')
+
+    results_output_dir = os.path.join("./static/OutputFiles/STAR", node_type, star_node_id)
 
     print(threads)
     print(indexing)
+    print(results_output_dir)
 
     d = {}
     try:
@@ -31,9 +37,9 @@ def run_star():
             os.makedirs(results_output_dir)
 
         # List FASTQ files in the input directory
-        fastq_files = [f for f in os.listdir(fastq_input_dir) if f.endswith(".fastq.gz")]
+        fastq_files = [f for f in os.listdir(fastaqc_output) if f.endswith(".fastq.gz")]
         if not fastq_files:
-            raise FileNotFoundError(f"No FASTQ files found in {fastq_input_dir}")
+            raise FileNotFoundError(f"No FASTQ files found in {fastaqc_output}")
 
         for file in fastq_files:
             name = file.split('.')[0]
@@ -43,7 +49,7 @@ def run_star():
                 f"{star_path} "
                 f"--runThreadN {threads} "
                 f"--genomeDir {indexing} "
-                f"--readFilesIn {fastq_input_dir}/{file} "
+                f"--readFilesIn {fastaqc_output}/{file} "
                 f"--readFilesCommand zcat "
                 f"--twopassMode Basic "
                 f"--outSAMtype BAM SortedByCoordinate "
@@ -68,6 +74,7 @@ def run_star():
 
         d["status"] = 1
         d["message"] = "STAR alignment and indexing completed successfully."
+        d["output"] = results_output_dir
 
     except Exception as e:
         print(f"Error running STAR: {e}")
@@ -77,7 +84,7 @@ def run_star():
     return jsonify(d)
 
 def save_file(file, folder):
-    save_path = os.path.join('./other', folder)
+    save_path = os.path.join('./static/InputFiles/STAR/other', folder)
     if not os.path.exists(save_path):
         os.makedirs(save_path)
     file_path = os.path.join(save_path, file.filename)
@@ -88,7 +95,7 @@ def download_and_save_file(url, folder):
     response = requests.get(url)
     if response.status_code == 200:
         filename = url.rsplit('/', 1)[-1]
-        save_path = os.path.join('./other', folder)
+        save_path = os.path.join('./static/InputFiles/STAR/other', folder)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         file_path = os.path.join(save_path, filename)
@@ -122,7 +129,7 @@ def upload_file():
     return jsonify({'error': 'No file or URL provided'}), 400
 
 
-indexing_files_dir = "./other"  # Use the absolute path in the container
+indexing_files_dir = "./static/InputFiles/STAR/other"  # Use the absolute path in the container
 @app.route("/indexing", methods=["POST"])
 @cross_origin()
 def run_indexing():
