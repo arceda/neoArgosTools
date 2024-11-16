@@ -2,7 +2,7 @@
 import React from 'react';
 import { TextField, Box, Button, Divider } from '@mui/material';
 
-const SimpleFormBWA = ({ formData, onFormDataChange}) => {    
+const Mutect = ({ formData, onFormDataChange}) => {    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,9 +23,9 @@ const SimpleFormBWA = ({ formData, onFormDataChange}) => {
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 300, margin: '0 auto', mt:2 }}
         >
             <TextField
-                label="Número de Hilos"
-                name="threads"
-                type='number'
+                label="Rango del Cromosoma"
+                name="chrconfig"
+                type='text'
                 value={formData.threads}
                 onChange={handleChange}
                 required
@@ -41,4 +41,4 @@ const SimpleFormBWA = ({ formData, onFormDataChange}) => {
     );
 };
 
-export default SimpleFormBWA;
+export default Mutect;

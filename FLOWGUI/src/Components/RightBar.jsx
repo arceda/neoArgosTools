@@ -99,7 +99,9 @@ export default function RightBar({
                     Tool {toolName}
                 </Typography>
             </Toolbar>
+
             <Divider />
+
             {ToolComponent &&
                 React.createElement(ToolComponent, {
                     ...props,
@@ -110,7 +112,8 @@ export default function RightBar({
                     sources,
                     loading,
                 })}
-            <Divider />
+
+            <Divider sx={{mt:3}} />
 
             <Box>
                 <Box mt={2} width="100%" textAlign="center">

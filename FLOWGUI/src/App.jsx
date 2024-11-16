@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
     return (
         <Fragment>
+            <ToastContainer />
             <CustomScrollbarStyles />
             <Box sx={{ display: 'flex', width: '100vw' }}>
                 <SideBarMUI></SideBarMUI>
@@ -21,7 +22,6 @@ function App() {
                     <Flow></Flow>
                 </Box>
             </Box>
-            <ToastContainer />
         </Fragment>
     );
 }

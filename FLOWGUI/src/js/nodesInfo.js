@@ -36,7 +36,7 @@ export const quality = [
       color: "#beffa4",
       connectors: ["default"],
       formData: {
-        input: [],
+        input: ["./static/InputFiles/FASTA/chr7.fa"],
         output: ["./static/InputFiles/RNAnormal/dnd_node0", "./static/InputFiles/RNAtumor/dnd_node1"], /* ["./static/InputFiles/RNAnormal/dnd_node0", "./static/InputFiles/RNAnormal/dnd_node1"] */
       },
     },
@@ -62,6 +62,9 @@ export const aligment = [
       connectors: ["default"],
       formData: {
         threads: "",
+        reqsnormal: [],
+        reqstumor: [],
+        output: [],
       },
     },
   },
@@ -92,6 +95,9 @@ export const aligmentQuality = [
       icon: "⚡",
       color: "#ffd3b6",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
 
@@ -102,6 +108,9 @@ export const aligmentQuality = [
       icon: "⚡",
       color: "#ffd3b6",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
   {
@@ -111,6 +120,9 @@ export const aligmentQuality = [
       icon: "⚡",
       color: "#ffd3b6",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
 ];
@@ -123,6 +135,9 @@ export const variantCalling = [
       icon: "🕹️",
       color: "#bae1ff",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
   {
@@ -132,6 +147,10 @@ export const variantCalling = [
       icon: "🕹️",
       color: "#bae1ff",
       connectors: ["default"],
+      formData: {
+        chrconfig: "",
+        output: [],
+      },
     },
   },
   {
