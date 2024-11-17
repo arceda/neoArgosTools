@@ -1,20 +1,60 @@
 // SimpleForm.jsx
 import React from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { TextField, Box, Button, Divider } from '@mui/material';
 
-const Picard = ({ formData, onFormDataChange}) => {    
+const Picard = ({ formData, onFormDataChange, setLoading, loading, id, sources }) => {    
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleSubmit = async () => {
+        let outputVals = []
+        console.log("-----------")
+        const source = sources?.filter(node => node.data.name == "Samtools")
+        setLoading(true)
+        console.log(source)
+
+        for (const node_dir of source[0].data.formData.output){
+            let nodet = "";
+            if (node_dir.includes("RNAnormal")) {
+                nodet = "RNAnormal"
+            } else {
+                nodet = "RNAtumor"
+            }
+
+            try {
     
+                const response = await axios.post('http://localhost:5000/picard', {
+                    node_id: id,
+                    rnatype: nodet,
+                    bam_dir: node_dir                    
+                });
+                
+                console.log(response.data.output)
+
+                if (response.data.status === 1) {
+                    outputVals.push(response.data.output);
+                    toast.success(response.data.message);
+                } else {
+                    setLoading(false);
+                    toast.error('Error: ' + response.data.message);
+                }
+            } catch (err) {
+                setLoading(false);
+                toast.error('Hubo un error');
+                console.error(err);
+            }
+
+        }
+
+        console.log(outputVals)
+        
+        setLoading(false);
+
         onFormDataChange({
             ...formData,
-            [name]: value
+            ["output"]: outputVals,
+            ["fastadir"]: source[0].data.formData.fastadir
         })
-    };
-
-    const submit = () => {
-        console.log("submited")
     }
     
     return (
@@ -24,7 +64,7 @@ const Picard = ({ formData, onFormDataChange}) => {
         >
             <Button
                 variant="contained"
-                onClick={submit}
+                onClick={handleSubmit}
             >
                 Procesar
             </Button>

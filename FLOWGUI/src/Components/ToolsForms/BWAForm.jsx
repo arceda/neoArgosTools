@@ -9,9 +9,6 @@ const BWA = ({ formData, onFormDataChange, setLoading, loading, id, sources}) =>
 
     const extensions = [".gz"]
 
-    const reqNormalDir = useState([])
-    const reqTumorDir = useState([])
-
     const handleChange = (e) => {
         const { name, value } = e.target;
     
@@ -122,11 +119,15 @@ const BWA = ({ formData, onFormDataChange, setLoading, loading, id, sources}) =>
             console.error(err);
         }
 
+        console.log("---------------------------")
+        console.log(outputVals)
+        console.log("---------------------------")
+
         try {
 
             const response = await axios.post('http://localhost:5000/bwa_alignment', {
                 threads: formData.threads,
-                nodeid: id,
+                node_id: id,
                 rnatype: "RNAtumor",
                 fasta_dir: fasta_dir[0],
                 req1_dir: r1File_tumor,
@@ -148,13 +149,16 @@ const BWA = ({ formData, onFormDataChange, setLoading, loading, id, sources}) =>
             console.error(err);
         }
 
+        console.log("---------------------------")
         console.log(outputVals)
+        console.log("---------------------------")
         
         setLoading(false);
 
         onFormDataChange({
             ...formData,
-            ["output"]: outputVals
+            ["output"]: outputVals,
+            ["fastadir"]: fasta_dir[0]
         })
     }
     

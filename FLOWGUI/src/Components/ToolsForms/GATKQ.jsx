@@ -1,11 +1,11 @@
 // SimpleForm.jsx
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { TextField, Box, Button, Typography } from '@mui/material';
+import { TextField, Box, Button, Divider, Typography } from '@mui/material';
 import DropFileZone from '../DropFileZone'
 
-const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }) => {    
+const GATKQ = ({ formData, onFormDataChange, setLoading, loading, id, sources }) => {    
 
     const extensions = [".gz", ".tbi"]
 
@@ -25,7 +25,7 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
         try {
             for (const file of filesSubmitted) {
                 const formData = new FormData();
-                formData.append('dir_name', `./static/InputFiles/MUTECT`);
+                formData.append('dir_name', `./static/InputFiles/GATKQ`);
                 formData.append('id_folder_name', id);
                 formData.append('file', file);
 
@@ -50,18 +50,11 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
                 }
             }
 
-            if (type == "germline_resources"){
-                onFormDataChange({
-                    ...formData,
-                    ["germline_resources"]: outputVals
-                })
-            } else {
-                onFormDataChange({
-                    ...formData,
-                    ["panel_normals"]: outputVals
-                })
-            }
-            
+            onFormDataChange({
+                ...formData,
+                ["vdir"]: outputVals
+            })
+
             toast.success("Data loaded")
             setLoading(false);
 
@@ -73,31 +66,64 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
     };
 
     const handleSubmit = async () => {
-        let outputVals = []
+        let sorted_dupmarked_bam = []
+        let contamination_table = []
+        let coverage = []
         
         console.log("-----------")
         const source = sources?.filter(node => node.data.name == "Picard")
         setLoading(true)
         console.log(source)
 
-        try {
-            const tumor_dir = source[0].data.formData.output.filter(path => path.includes("RNAtumor"));
-            const normal_dir = source[0].data.formData.output.filter(path => path.includes("RNAnormal"));
+        for (const node_dir of source[0].data.formData.output){
+            let nodet = "";
+            if (node_dir.includes("RNAnormal")) {
+                nodet = "RNAnormal"
+            } else {
+                nodet = "RNAtumor"
+            }
 
-            const response = await axios.post('http://localhost:5000/mutect', {
+            try {
+    
+                const response = await axios.post('http://localhost:5000/mutect_pileup', {
+                    node_id: id,
+                    rnatype: nodet,
+                    bam_dir: node_dir,
+                    v_dir: formData.vdir[0],
+                    chr_config: formData.chrconfig               
+                });
+                
+                console.log(response.data.output)
+
+                if (response.data.status === 1) {
+                    sorted_dupmarked_bam.push(response.data.output);
+                    toast.success(response.data.message);
+                } else {
+                    setLoading(false);
+                    toast.error('Error: ' + response.data.message);
+                }
+            } catch (err) {
+                setLoading(false);
+                toast.error('Hubo un error');
+                console.error(err);
+            }
+
+        }
+
+        try {
+            const tumor_dir = sorted_dupmarked_bam.filter(path => path.includes("RNAtumor"));
+            const normal_dir = sorted_dupmarked_bam.filter(path => path.includes("RNAnormal"));
+    
+            const response = await axios.post('http://localhost:5000/mutect_contamination', {
                 node_id: id,
-                fasta_file: source[0].data.formData.fastadir,
-                bam_tumor_file: tumor_dir[0],
-                bam_normal_file: normal_dir[0],
-                chr_config: formData.chrconfig,
-                germline_resources: formData.germline_resources[0],
-                panel_normals: formData.panel_normals[0],
+                table_normal_file: normal_dir[0],
+                table_tumor_file: tumor_dir[0],           
             });
             
             console.log(response.data.output)
 
             if (response.data.status === 1) {
-                outputVals.push(response.data.output);
+                contamination_table.push(response.data.output);
                 toast.success(response.data.message);
             } else {
                 setLoading(false);
@@ -109,13 +135,40 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
             console.error(err);
         }
 
-        console.log(outputVals)
+        try {
+            const tumor_dir = source[0].data.formData.output.filter(path => path.includes("RNAtumor"));
+            const normal_dir = source[0].data.formData.output.filter(path => path.includes("RNAnormal"));
+    
+            const response = await axios.post('http://localhost:5000/mutect_coverage', {
+                node_id: id,
+                fasta_file: source[0].data.formData.fastadir,
+                bam_tumor_file: tumor_dir[0],        
+                bam_normal_file: normal_dir[0],     
+                chr_config: formData.chrconfig   
+            });
+            
+            console.log(response.data.output)
+
+            if (response.data.status === 1) {
+                coverage.push(response.data.output);
+                toast.success(response.data.message);
+            } else {
+                setLoading(false);
+                toast.error('Error: ' + response.data.message);
+            }
+        } catch (err) {
+            setLoading(false);
+            toast.error('Hubo un error');
+            console.error(err);
+        }
         
         setLoading(false);
 
         onFormDataChange({
             ...formData,
-            ["output"]: outputVals,
+            ["sorted_dupmarked_bam"]: sorted_dupmarked_bam,
+            ["contamination_table"]: contamination_table,
+            ["coverage"]: coverage,
             ["fastadir"]: source[0].data.formData.fastadir
         })
     }
@@ -125,7 +178,7 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
             component="form" 
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxWidth: 300, m:2 }}
         >
-            <Typography>Germline Resources</Typography>
+            <Typography>Confidence File and Index</Typography>
             <DropFileZone 
                 loading={loading}
                 setLoading={setLoading}
@@ -134,19 +187,7 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
                 id={id}
                 handleDropSubmit={handleDropSubmit}
                 extensions={extensions}
-                type={"germline_resources"}
-            />
-
-            <Typography>Panel of Normals</Typography>
-            <DropFileZone 
-                loading={loading}
-                setLoading={setLoading}
-                formData={formData}
-                onFormDataChange={onFormDataChange}
-                id={id}
-                handleDropSubmit={handleDropSubmit}
-                extensions={extensions}
-                type={"panel_normals"}
+                type={""}
             />
 
             <TextField
@@ -168,4 +209,4 @@ const Mutect = ({ formData, onFormDataChange, setLoading, loading, id, sources }
     );
 };
 
-export default Mutect;
+export default GATKQ;

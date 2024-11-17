@@ -501,18 +501,18 @@ def mutect_pileup_summary():
 
         mutect_pileup_result = os.system(mutect_pileup_command)
         if mutect_pileup_result != 0:
-            raise Exception(f"MUTECT pileup command failed with status {mutect_pileup_result}")
+            raise Exception(f"GATK pileup command failed with status {mutect_pileup_result}")
         
         # ----------------------------Pileup
         
         results_output_dir = os.path.join(results_output_dir, mutect_tables_concat)
 
         d["status"] = 1
-        d["message"] = "MUTECT completed successfully."
+        d["message"] = "GATK pileup completed successfully."
         d["output"] = results_output_dir
 
     except Exception as e:
-        print(f"Error running MUTECT: {e}")
+        print(f"Error running GATK: {e}")
         d["status"] = 0
         d["message"] = str(e)
 
@@ -561,18 +561,18 @@ def mutect_estimate_contamination():
         print("Running command:", mutect_contamination_command)
         mutect_contamination_result = os.system(mutect_contamination_command)
         if mutect_contamination_result != 0:
-            raise Exception(f"MUTECT contamination command failed with status {mutect_contamination_result}")
+            raise Exception(f"GATK contamination command failed with status {mutect_contamination_result}")
         
         # ----------------------------Pileup
         
         results_output_dir = os.path.join(results_output_dir, "contamination.table")
 
         d["status"] = 1
-        d["message"] = "MUTECT contamination completed successfully."
+        d["message"] = "GATK contamination completed successfully."
         d["output"] = results_output_dir
 
     except Exception as e:
-        print(f"Error running MUTECT: {e}")
+        print(f"Error running GATK: {e}")
         d["status"] = 0
         d["message"] = str(e)
 
@@ -658,18 +658,16 @@ def mutect_depth_coverage():
 
         mutect_coverage_result = os.system(mutect_coverage_command)
         if mutect_coverage_result != 0:
-            raise Exception(f"MUTECT pileup command failed with status {mutect_coverage_result}")
-        
-        # ----------------------------Pileup
+            raise Exception(f"GATK coverage command failed with status {mutect_coverage_result}")
         
         results_output_dir = os.path.join(results_output_dir, "Coverage")
 
         d["status"] = 1
-        d["message"] = "MUTECT completed successfully."
+        d["message"] = "GATK coverage completed successfully."
         d["output"] = results_output_dir
 
     except Exception as e:
-        print(f"Error running MUTECT: {e}")
+        print(f"Error running GATK: {e}")
         d["status"] = 0
         d["message"] = str(e)
 
@@ -782,12 +780,12 @@ def mutect():
 
         mutect_coverage_result = os.system(mutect_coverage_command)
         if mutect_coverage_result != 0:
-            raise Exception(f"MUTECT pileup command failed with status {mutect_coverage_result}")
+            raise Exception(f"MUTECT2 command failed with status {mutect_coverage_result}")
         
         results_output_dir = os.path.join(results_output_dir, "mutect2.vcf")
 
         d["status"] = 1
-        d["message"] = "MUTECT completed successfully."
+        d["message"] = "MUTECT2 completed successfully."
         d["output"] = results_output_dir
 
     except Exception as e:
@@ -848,16 +846,16 @@ def mutect_filtercalls():
 
         mutect_filtercalls_result = os.system(mutect_filtercalls_command)
         if mutect_filtercalls_result != 0:
-            raise Exception(f"MUTECT filtercalls command failed with status {mutect_filtercalls_result}")
+            raise Exception(f"GATK filtercalls command failed with status {mutect_filtercalls_result}")
         
         results_output_dir = os.path.join(results_output_dir, "mutect2.filtered.vcf")
 
         d["status"] = 1
-        d["message"] = "MUTECT completed successfully."
+        d["message"] = "GATK filtercalls completed successfully."
         d["output"] = results_output_dir
 
     except Exception as e:
-        print(f"Error running MUTECT: {e}")
+        print(f"Error running GATK: {e}")
         d["status"] = 0
         d["message"] = str(e)
 

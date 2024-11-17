@@ -5,6 +5,8 @@ import BWA from "./BWAForm";
 import SamTools from "./SamToolsForm";
 import Mutect from "./MutectForm";
 import Picard from "./Picard";
+import GATKQ from "./GATKQ";
+import GATKF from "./GATKF";
 
 export const TOOLS = {
   "RNA tumor": {
@@ -35,8 +37,16 @@ export const TOOLS = {
     Component: Picard,
     props: {},
   },
+  "GATK quality": {
+    Component: GATKQ,
+    props: {},
+  },
   Mutect: {
     Component: Mutect,
+    props: {},
+  },
+  "GATK filtering": {
+    Component: GATKF,
     props: {},
   },
 };

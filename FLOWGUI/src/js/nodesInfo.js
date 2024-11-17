@@ -48,6 +48,9 @@ export const quality = [
       icon: "✨",
       color: "#beffa4",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
 ];
@@ -62,6 +65,7 @@ export const aligment = [
       connectors: ["default"],
       formData: {
         threads: "",
+        fastadir: "",
         reqsnormal: [],
         reqstumor: [],
         output: [],
@@ -96,6 +100,7 @@ export const aligmentQuality = [
       color: "#ffd3b6",
       connectors: ["default"],
       formData: {
+        fastadir: "",
         output: [],
       },
     },
@@ -109,6 +114,7 @@ export const aligmentQuality = [
       color: "#ffd3b6",
       connectors: ["default"],
       formData: {
+        fastadir: "",
         output: [],
       },
     },
@@ -121,7 +127,12 @@ export const aligmentQuality = [
       color: "#ffd3b6",
       connectors: ["default"],
       formData: {
-        output: [],
+        fastadir: "",
+        vdir: "",
+        chrconfig: "",
+        sorted_dupmarked_bam: [],
+        contamination_table: [],
+        coverage: [],
       },
     },
   },
@@ -149,6 +160,9 @@ export const variantCalling = [
       connectors: ["default"],
       formData: {
         chrconfig: "",
+        fastadir: "",
+        germline_resources: [],
+        panel_normals: [],
         output: [],
       },
     },
@@ -160,6 +174,9 @@ export const variantCalling = [
       icon: "🕹️",
       color: "#bae1ff",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
 ];
@@ -172,6 +189,9 @@ export const filtering = [
       icon: "🪢",
       color: "#ffffba",
       connectors: ["default"],
+      formData: {
+        output: [],
+      },
     },
   },
 ];
@@ -184,6 +204,9 @@ export const annotations = [
       icon: "📑",
       color: "#f1cbff",
       connectors: ["output"],
+      formData: {
+        output: [],
+      },
     },
   },
 ];

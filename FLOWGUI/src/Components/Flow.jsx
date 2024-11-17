@@ -92,7 +92,7 @@ const DnDFlow = () => {
             let output;
             let formdata = selectedNode.data.formData;
 
-            if (selectedNode.data.name == "Star") {
+            if (selectedNode.data.name === "Star") {
                 output = findRna(selectedNode);
             } else {
                 output = getInfoSourcesOfAnyNode(selectedNode)
