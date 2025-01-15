@@ -1,4 +1,4 @@
-import { samples, quality, aligment, aligmentQuality, variantCalling, filtering, annotations} from "./nodesInfo";
+import { samples, quality, aligment, aligmentQuality, variantCalling, filtering, annotations, pMHC_tools} from "./nodesInfo";
 
 export const items = [
     { name: 'Samples', nodes: samples },
@@ -8,4 +8,5 @@ export const items = [
     { name: 'Variant Calling', nodes: variantCalling },
     { name: 'VCF Filter', nodes: filtering },
     { name: 'Anotations', nodes: annotations },
+    { name: 'pMHC tools', nodes: pMHC_tools },
 ];

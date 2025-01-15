@@ -6,3 +6,6 @@ test/*
 test.tar.gz
 var-proSeq.fasta
 node_modules/*
+GUI/node_modules/.bin/acorn
+GUI/node_modules/*
+

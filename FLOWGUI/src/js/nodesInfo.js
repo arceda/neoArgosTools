@@ -200,10 +200,110 @@ export const annotations = [
   {
     type: "customNode",
     data: {
-      name: "Annovar annotation",
+      name: "Annovar",
       icon: "📑",
       color: "#f1cbff",
-      connectors: ["output"],
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "Isovar",
+      icon: "📑",
+      color: "#f1cbff",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "VEP",
+      icon: "📑",
+      color: "#f1cbff",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "SnpEff",
+      icon: "📑",
+      color: "#f1cbff",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+];
+
+
+export const pMHC_tools = [
+  {
+    type: "customNode",
+    data: {
+      name: "NetMHCpan",
+      icon: "🔍",
+      color: "#69d0e8",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "MixMHCpred",
+      icon: "🔍",
+      color: "#69d0e8",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "MHCFlurry",
+      icon: "🔍",
+      color: "#69d0e8",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "Anthem",
+      icon: "🔍",
+      color: "#69d0e8",
+      connectors: ["default"],
+      formData: {
+        output: [],
+      },
+    },
+  },
+  {
+    type: "customNode",
+    data: {
+      name: "ACME",
+      icon: "🔍",
+      color: "#69d0e8",
+      connectors: ["default"],
       formData: {
         output: [],
       },
